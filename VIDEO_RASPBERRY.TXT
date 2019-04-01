@@ -1,0 +1,61 @@
+Raspberry
+to find raspberry: Angry IP scanner
+ssh pi@192.168.x.y
+password raspberry
+change pass: passwd
+sudo apt-get update
+sudo apt-get upgrade
+shutdown -h now
+
+WIFI CONFIGURATION
+iwconfig
+sudo iwlist wlan0 scan | grep ESSID
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+пропускаем первые две строчки:
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+Добавляем
+network={
+        ssid="YourSSID"
+        psk="password"
+        key_mgmt=WPA-PSK
+}
+Если используется WEP, то:
+network={
+        ssid="YourSSID"
+        wep_key0="password12345"
+        key_mgmt=NONE
+}
+sudo reboot
+ifconfig -a
+
+
+Raspberry Pi Camera module
+sudo raspi-config
+Select Enable camera and hit Enter, then go to Finish and you'll be prompted to reboot.
+
+//INSTALL h264 library
+Open a terminal window on the raspberrypi (or via SSH connection) and type in the following commands:
+Download h264 library: git clone --depth 1 http://git.videolan.org/git/x264
+Change directory to the x264 folder: cd x264
+Configure installation: ./configure --host=arm-unknown-linux-gnueabi --enable-static --disable-opencl
+Create the installation: make -j4
+Install h264 library on your system: sudo make install
+
+// INSTALL FFMPEG
+sudo apt-get install libomxil-bellagio-dev
+wget -O ffmpeg.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot-git.tar.bz2
+tar xvjf ffmpeg.tar.bz2
+cd ffmpeg
+sudo ./configure --arch=arm --target-os=linux --enable-gpl --enable-omx --enable-omx-rpi --enable-libx264 --enable-nonfree
+Run sudo make -j$(grep -c ^processor /proc/cpuinfo)
+sudo make install
+Delete the FFmpeg directory and tar file that were created during the download process in Step 1. FFmpeg has been installed so they are no longer needed.
+
+npm install raspi-live -g
+raspi-live --help
+
+to start:
+raspi-live start -t 1 -l 12 -s 50
+OR (in background with stdout dev null) :
+raspi-live start -t 1 -l 12 -s 50 &>/dev/null &
